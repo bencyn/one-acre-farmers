@@ -2,7 +2,9 @@ from django.shortcuts import render
 from rest_framework import viewsets  , status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import CustomerSerializer , SeasonsSerializer, CustomerSummariesSerializer, RepaymentUploadsSerializer , RepaymentsSerializer
+from .serializers import (CustomerSerializer, SeasonsSerializer,
+                        CustomerSummariesSerializer,RepaymentUploadsSerializer , 
+                        RepaymentsSerializer )
 from .models import Customers , Seasons, CustomerSummaries , RepaymentUploads,Repayments
 from django_filters.rest_framework import DjangoFilterBackend
 # Create your views here.
@@ -62,7 +64,9 @@ class RepaymentUploadsView(APIView):
         customer = req_data['customer']
         date = req_data['date']
         season = req_data['season']
-        payment = req_data['amount']
+        payment = req_data['amount'] 
+        
+        # print("Amount Payable", amount_payable)
 
         print("=== Customer Post", customer)
         credit_records = CustomerSummaries.objects.filter(customer=customer).order_by('id').values()
@@ -77,20 +81,37 @@ class RepaymentUploadsView(APIView):
         # filter credits by customer and get total debt
         initial_amount = payment
 
-        print("Reducing Amount", initial_amount)
+        print("====Reducing Payment", initial_amount)
+
+        repayable_amounts = []
+
         for record in credit_records:
             print("Record",record)
 
+
             payment_amount = initial_amount
-            print("Reducing Payment",payment_amount)
+
+
+            credit = record['totalCredit']
+            currentTotalPaid = record['totalRepaid']
+
+            season_debt = credit - currentTotalPaid
+            print("Season Debt", season_debt)
+
+            amount_payable = season_debt - payment_amount 
+            payable_amount = 0 - amount_payable
+            print("Amount Payable", payable_amount)
+            # print("Amount Payable", amount_payable)
             # Create Repayment Record
             repayment_record = {
                 "date" : req_data['date'],
-                "amount": payment_amount,
+                "amount": amount_payable,
                 "customer": req_data['customer'],
                 "season": record['season_id'],
                 "parent_id": parent_id
             }
+
+            # print("Amount Payable", amount_payable)
 
             rp_serializer = RepaymentsSerializer(data = repayment_record)
             rp_serializer.is_valid(raise_exception=True)
@@ -98,26 +119,24 @@ class RepaymentUploadsView(APIView):
 
             # Set Parent Id after first repayment record entry
             parent_id = rp_serializer.data['id']
-
+            amount_payable = season_debt - payment_amount 
             print("Repayment Record",rp_serializer.data)
 
-            credit = record['totalCredit']
-            currentTotalPaid = record['totalRepaid']
+        
+            # total_paid = currentTotalPaid + payment_amount
 
-            season_debt = credit - currentTotalPaid
-            payment_amount = payment_amount -season_debt
-            print("Season Debt", season_debt)
-            total_paid = currentTotalPaid + payment_amount
-
-            print("---Total Paid----",total_paid)
+            # print("---Total Paid----",total_paid)
             # update customer summaries
 
+            # updated_summary = {
+            #     "totalRepaid":total_paid,
+            # }
             updated_summary = {
-                "totalRepaid":total_paid,
+                "totalRepaid":currentTotalPaid,
             }
             cs_pk = int(record['id'])
             customer_summaries = CustomerSummaries.objects.get(pk=cs_pk)
-            print("CustomerSummarry Primary",customer_summaries.pk)
+            print("CustomerSummarry Primary",customer_summaries)
             cs_serializer = CustomerSummariesSerializer(customer_summaries,data=updated_summary,partial = True)
 
             if cs_serializer.is_valid():
@@ -125,13 +144,6 @@ class RepaymentUploadsView(APIView):
                 print(cs_serializer.data)
             else:
                 print("error")
-            if payment_amount < season_debt:
-                payment_amount = payment_amount
-            else:
-                payment_amount = payment_amount - season_debt
-                
-
-            print("Reducing Payment",payment_amount)
 
         message= "okay"
         repayments = Repayments.objects.filter(customer=customer,date=date)

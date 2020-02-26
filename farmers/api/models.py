@@ -19,7 +19,8 @@ class CustomerSummaries(models.Model):
     totalRepaid = models.DecimalField(max_digits=19, decimal_places=2)
     totalCredit = models.DecimalField(max_digits=19, decimal_places=2)
 
-
+    class Meta:
+        ordering = ['id']
 class RepaymentUploads(models.Model):
     customer =  models.ForeignKey('Customers', on_delete=models.CASCADE)
     season = models.ForeignKey(Seasons, on_delete= models.CASCADE, blank=True,null=True)
