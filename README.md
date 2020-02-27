@@ -48,7 +48,7 @@ The postman interface allows the user to post repayment data then receives a jso
 
 - add unit tests and integrate travis circle CI so as to keep track of the test coverage
 - refactore code and integerate tools like code climate to help enhance code readability and maintainability
-- add more validations
+- add more validations check for all model objects
 - host the api application to a production server prefarrably apache, nginix or heroku
 - implement authenitication by use of auth2 jwt_tokens
 - create a user interface that consume the api endpoints
