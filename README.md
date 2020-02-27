@@ -1,6 +1,6 @@
 # One Acre Fund Seasonless Repayments
 
-The postman interface allows the user to post repayment data then a json output of computed repayments and a customer summary
+The postman interface allows the user to post repayment data then  receives a json output of computed repayments and a customer summary
 of the update credit records
 
 # Post-mortem 
