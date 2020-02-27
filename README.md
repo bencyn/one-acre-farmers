@@ -4,7 +4,7 @@ The postman interface allows the user to post repayment data then receives a jso
 
 ## Post-mortem
 
-###### Current project status
+##### Current project status
 
 - a user can view create update or delete customers, seasons, customer summaries, and repayments
 - user can also list , post repayment uploads and generate repayment records depending on status of the repayment record (Cascade, Override, overpaid)
