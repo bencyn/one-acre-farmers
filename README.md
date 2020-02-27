@@ -2,6 +2,26 @@
 
 The postman interface allows the user to post repayment data then receives a json output of computed repayments and a customer summary of the updated credit records
 
+## Getting Started
+
+- Clone the repo and `https://github.com/bencyn/one-acre-farmers.git`  and `git checkout develop`
+
+- Create and activate a virtual environment
+```$ virtualenv env $ source env/bin/activate```
+
+- Install requirements
+```$ pip install -r requirements.txt```
+
+- Make migrations
+```$ python manage.py makemigrations```
+
+- Run migrations
+```$ python manage.py migrate```
+
+- Run api applicaition
+```$ python manage.py runserver```
+
+
 ## Post-mortem
 
 ##### Current project status
@@ -10,8 +30,8 @@ The postman interface allows the user to post repayment data then receives a jso
 - user can also list , post repayment uploads and generate repayment records depending on status of the repayment record (Cascade, Override, overpaid)
 
 ##### Estimate on the outstanding work
+- a maximum of one week to cover all the edge cases and write a script to seed to the db
 
-- a maximum of one week to cover all the edge cases.
 ##### Successes/what went well
 
 - I managed to implement overpaid and override case scenarios when a user uploads repayments for a specific season and or payment with no autostanding previous credits. This also reflects on the final customer summary
@@ -32,3 +52,5 @@ The postman interface allows the user to post repayment data then receives a jso
 - host the api application to a production server prefarrably apache, nginix or heroku
 - implement authenitication by use of auth2 jwt_tokens
 - create a user interface that consume the api endpoints
+
+
